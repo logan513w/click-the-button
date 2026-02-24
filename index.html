@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Circle Tap Game</title>
+
+    <!-- Mobile friendly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            position: relative;
+            touch-action: manipulation;
+        }
+
+        #circle {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-color: red;
+            border: 4px solid gray;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        #counter {
+            position: fixed;
+            bottom: 12px;
+            width: 100%;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div id="circle"></div>
+
+<div id="counter">
+    <span id="timer">Time: 0s</span>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    Taps: <span id="count">0</span>
+</div>
+
+<script>
+    const circle = document.getElementById("circle");
+    const countText = document.getElementById("count");
+    const timerText = document.getElementById("timer");
+
+    let taps = 0;
+    let seconds = 0;
+
+    function placeCircle() {
+        const maxX = window.innerWidth - circle.offsetWidth;
+        const maxY = window.innerHeight - circle.offsetHeight - 80;
+
+        circle.style.left = Math.random() * maxX + "px";
+        circle.style.top = Math.random() * maxY + "px";
+    }
+
+    circle.addEventListener("click", () => {
+        taps++;
+        countText.textContent = taps;
+        placeCircle();
+    });
+
+    setInterval(() => {
+        seconds++;
+        timerText.textContent = "Time: " + seconds + "s";
+    }, 1000);
+
+    // Start position
+    placeCircle();
+</script>
+
+</body>
+</html>
