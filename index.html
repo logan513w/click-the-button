@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Circle Tap Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    position: relative;
+}
+
+#circle {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: red;
+    border: 4px solid gray;
+    border-radius: 50%;
+}
+
+#counter {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#menu {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+#dropdown {
+    display: none;
+    position: fixed;
+    top: 45px;
+    right: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 160px;
+}
+
+#dropdown div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#dropdown div:hover {
+    background: #eee;
+}
+</style>
+</head>
+
+<body>
+
+<div id="menu">⋮</div>
+
+<div id="dropdown">
+    <div onclick="createAccount()">Create Account</div>
+    <div onclick="login()">Login</div>
+    <div onclick="logout()">Logout</div>
+</div>
+
+<div id="circle"></div>
+
+<div id="counter">
+    <span id="timer">Time: 0s</span>
+    &nbsp;|&nbsp;
+    Taps: <span id="count">0</span>
+</div>
+
+<script>
+let taps = 0;
+let seconds = 0;
+let currentUser = null;
+
+const circle = document.getElementById("circle");
+const countText = document.getElementById("count");
+const timerText = document.getElementById("timer");
+const dropdown = document.getElementById("dropdown");
+
+document.getElementById("menu").onclick = () => {
+    dropdown.style.display =
+        dropdown.style.display === "block" ? "none" : "block";
+};
+
+function placeCircle() {
+    const x = Math.random() * (innerWidth - 80);
+    const y = Math.random() * (innerHeight - 160);
+    circle.style.left = x + "px";
+    circle.style.top = y + "px";
+}
+
+circle.onclick = () => {
+    taps++;
+    countText.textContent = taps;
+    saveData();
+    placeCircle();
+};
+
+setInterval(() => {
+    seconds++;
+    timerText.textContent = "Time: " + seconds + "s";
+    saveData();
+}, 1000);
+
+function createAccount() {
+    const username = prompt("Choose a username:");
+    if (!username) return;
+
+    localStorage.setItem(username, JSON.stringify({
+        taps: 0,
+        time: 0
+    }));
+
+    currentUser = username;
+    taps = 0;
+    seconds = 0;
+    updateUI();
+}
+
+function login() {
+    const username = prompt("Enter username:");
+    const data = localStorage.getItem(username);
+
+    if (!data) {
+        alert("Account not found");
+        return;
+    }
+
+    currentUser = username;
+    const saved = JSON.parse(data);
+    taps = saved.taps;
+    seconds = saved.time;
+    updateUI();
+}
+
+function logout() {
+    currentUser = null;
+    taps = 0;
+    seconds = 0;
+    updateUI();
+}
+
+function saveData() {
+    if (!currentUser) return;
+
+    localStorage.setItem(currentUser, JSON.stringify({
+        taps: taps,
+        time: seconds
+    }));
+}
+
+function updateUI() {
+    countText.textContent = taps;
+    timerText.textContent = "Time: " + seconds + "s";
+}
+
+placeCircle();
+</script>
+
+</body>
+</html>
